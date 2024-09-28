@@ -23,13 +23,19 @@ const FILTER_NAMES = Object.keys(FILTER_MAP);
 function App(props) {
   const [tasks, setTasks] = useState(props.tasks);
   const [filter, setFilter] = useState("All");
+  const [currentDate, setCurrentDate] = useState("");
+
+  // Function to format and set the current date
+  useEffect(() => {
+    const date = new Date();
+    const options = { year: "numeric", month: "long", day: "numeric" };
+    const formattedDate = date.toLocaleDateString(undefined, options);
+    setCurrentDate(formattedDate);
+  }, []); // Run only once when the component mounts
 
   function toggleTaskCompleted(id) {
     const updatedTasks = tasks.map((task) => {
-      // if this task has the same ID as the edited task
       if (id === task.id) {
-        // use object spread to make a new obkect
-        // whose `completed` prop has been inverted
         return { ...task, completed: !task.completed };
       }
       return task;
@@ -44,12 +50,9 @@ function App(props) {
 
   function editTask(id, newName) {
     const editedTaskList = tasks.map((task) => {
-      // if this task has the same ID as the edited task
       if (id === task.id) {
-        // Copy the task and update its name
         return { ...task, name: newName };
       }
-      // Return the original task if it's not the edited task
       return task;
     });
     setTasks(editedTaskList);
@@ -98,6 +101,7 @@ function App(props) {
   return (
     <div className="todoapp stack-large">
       <h1>Daily Planner</h1>
+      <h4>{currentDate}</h4> {/* Date displayed here */}
       <Form addTask={addTask} />
       <div className="filters btn-group stack-exception">{filterList}</div>
       <h2 id="list-heading" tabIndex="-1" ref={listHeadingRef}>
